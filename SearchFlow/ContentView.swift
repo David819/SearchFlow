@@ -57,7 +57,6 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("Search")
-            
         }
     }
 }
