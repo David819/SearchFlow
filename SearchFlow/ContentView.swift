@@ -40,7 +40,6 @@ struct ContentView: View {
                     .padding(.horizontal, 30)
                     .foregroundColor(Color(.systemGray2))
                 )
-                
 
                     ForEach (API.sharedAPI.requestDataWith(text: textToSearch)) { oneGroup in
                         Section(header:
