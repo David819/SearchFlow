@@ -32,6 +32,7 @@ class ContentViewModel: ObservableObject {
                 if text == "" {
                     self?.groupProductViewModels = []
                 }
+                // fetch data from local or net API
                 self?.fetchDataLocal()
 //                self?.fetchDataOnline()
             }
