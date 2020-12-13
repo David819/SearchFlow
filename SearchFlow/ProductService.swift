@@ -10,21 +10,29 @@ import Combine
 
 final class ProductService {
     
-    var components: URLComponents {
+    var componentsTest: URLComponents {
+        // local nginx
+        var components = URLComponents()
+        components.scheme = "http"
+        components.host = "10.0.1.147"
+        components.port = 8976
+        components.path = "/searchflow/"
+
+        return components
+    }
+    
+    var componentsOnline: URLComponents {
         var components = URLComponents()
         components.scheme = "https"
-//        components.host = "10.0.1.147"
         components.host = "sidt.ai"
-//        components.port = 8976
         components.port = 8602
-//        components.path = "/searchflow/"
         components.path = "/test/searchflow"
 
         return components
     }
     
     func request(text: String) -> URLRequest {
-        var request = URLRequest(url: components.url!, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 5)
+        var request = URLRequest(url: componentsTest.url!, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 5)
         request.httpMethod = "POST"
         let dict = ["searchText": text]
         let d = try! JSONSerialization.data(withJSONObject: dict, options: .fragmentsAllowed)
