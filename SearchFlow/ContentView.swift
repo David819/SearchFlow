@@ -12,7 +12,7 @@ let inputBackgroundColor = Color(.sRGB, red: 235/255, green: 235/255, blue: 235/
 let listBackgroundColor = Color(.sRGB, red: 247/255, green: 247/255, blue: 247/255, opacity: 1)
 
 
-class ResultViewModel: ObservableObject {
+class ContentViewModel: ObservableObject {
     
     private let networkService = ProductService()
     
@@ -22,6 +22,22 @@ class ResultViewModel: ObservableObject {
     var lastSearch: String = ""
     
     var cancellable: AnyCancellable?
+
+    var subscriptions = Set<AnyCancellable>()
+    
+    init() {
+        $textToSearch
+            .debounce(for: 0, scheduler: DispatchQueue.main)
+            .sink { [weak self] (text) in
+                print("=== \(text)")
+                if text == "" {
+                    self?.groupProductViewModels = []
+                }
+                self?.fetchDataLocal()
+//                self?.fetchDataOnline()
+            }
+            .store(in: &subscriptions)
+    }
 
     func fetchDataLocal() {
         guard textToSearch.replacingOccurrences(of: " ", with: "") != "" else {
@@ -58,13 +74,13 @@ class ResultViewModel: ObservableObject {
 
 struct ContentView: View {
 
-    @ObservedObject private var viewModel = ResultViewModel()
+    @ObservedObject private var viewModel = ContentViewModel()
     
     var body: some View {
         NavigationView {
             ScrollView {
                 HStack {
-                    SearchBar(resultViewModel: viewModel)
+                    SearchBar(textToSearch: $viewModel.textToSearch)
                     .padding()
                 }
                 ForEach (viewModel.groupProductViewModels) { groupViewModel in
@@ -94,35 +110,17 @@ extension UINavigationController {
         scrollEdgeAppearance.backgroundColor = UIColor(red: 247/255, green: 247/255, blue: 247/255, alpha: 1.0)
 
         navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
-
     }
 }
 
 
 struct SearchBar: View {
-    
-    @ObservedObject var resultViewModel: ResultViewModel
+    @Binding var textToSearch: String
     @State var isSearching = false
     
     var body: some View {
         HStack {
-            TextField("Tap here to search", text: $resultViewModel.textToSearch, onEditingChanged: { (value) in
-                
-            }, onCommit: {
-                // keyboard tap 'return'
-                if resultViewModel.textToSearch.replacingOccurrences(of: " ", with: "") == "" {
-                    DispatchQueue.main.async {
-                        isSearching = false
-                    }
-                }
-            })
-            .onReceive(resultViewModel.textToSearch.publisher.collect()) {
-                // textfield text change to fetch
-                _ = $0.map(String.init).joined()
-                resultViewModel.fetchDataLocal()
-//                resultViewModel.fetchDataOnline()
-            }
-            // can also use 'publisher.reduce' to get text
+            TextField("Tap here to search", text: $textToSearch)
                 .padding(.leading, 35)
         }
         .padding(.vertical, 10)
@@ -138,8 +136,7 @@ struct SearchBar: View {
                 if isSearching == true {
                     Button(action: {
                         DispatchQueue.main.async {
-                            resultViewModel.textToSearch = ""
-                            resultViewModel.groupProductViewModels = []
+                            textToSearch = ""
                         }
                     }, label: {
                         Image(systemName: "xmark")
