@@ -106,8 +106,8 @@ struct SearchBar: View {
             .onReceive(resultViewModel.textToSearch.publisher.collect()) {
                 // textfield text change to fetch
                 _ = $0.map(String.init).joined()
-//                resultViewModel.fetchDataLocal()
-                resultViewModel.fetchDataOnline()
+                resultViewModel.fetchDataLocal()
+//                resultViewModel.fetchDataOnline()
             }
             // can also use 'publisher.reduce' to get text
                 .padding(.leading, 35)
