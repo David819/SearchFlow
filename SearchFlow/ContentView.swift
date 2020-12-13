@@ -29,7 +29,6 @@ class ContentViewModel: ObservableObject {
         $textToSearch
             .debounce(for: 0, scheduler: DispatchQueue.main)
             .sink { [weak self] (text) in
-                print("=== \(text)")
                 if text == "" {
                     self?.groupProductViewModels = []
                 }
