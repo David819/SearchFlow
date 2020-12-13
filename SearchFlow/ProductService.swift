@@ -32,7 +32,7 @@ final class ProductService {
     }
     
     func request(text: String) -> URLRequest {
-        var request = URLRequest(url: componentsTest.url!, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 5)
+        var request = URLRequest(url: componentsOnline.url!, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 5)
         request.httpMethod = "POST"
         let dict = ["searchText": text]
         let d = try! JSONSerialization.data(withJSONObject: dict, options: .fragmentsAllowed)
