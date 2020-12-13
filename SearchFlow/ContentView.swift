@@ -85,6 +85,19 @@ struct ContentView: View {
 }
 
 
+// Customize navigation bar background color
+extension UINavigationController {
+    open override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let scrollEdgeAppearance = UINavigationBarAppearance()
+        scrollEdgeAppearance.backgroundColor = UIColor(red: 247/255, green: 247/255, blue: 247/255, alpha: 1.0)
+
+        navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
+
+    }
+}
+
 
 struct SearchBar: View {
     
